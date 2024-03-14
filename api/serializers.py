@@ -5,6 +5,12 @@ class LoginUserSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields='__all__'
+        
 class Institutionserializer(serializers.ModelSerializer):
     class Meta:
         model=InstitutionReg

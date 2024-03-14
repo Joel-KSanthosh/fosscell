@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate,login
 from rest_framework.views import Response,APIView,status
 from rest_framework.decorators import api_view
 from .models import InstitutionReg,FossAdvisor,Members,User
-from api.serializers import Institutionserializer,Fossadvisorserializer,Membersserializer,LoginUserSerializer,CombinedSerializer
+from api.serializers import Institutionserializer,Fossadvisorserializer,Membersserializer,LoginUserSerializer,CombinedSerializer,UserSerializer
 from rest_framework.response import Response
 
 class LoginApiView(APIView):
@@ -114,11 +114,42 @@ def combined_data_view(request):
     else:
         return Response({'error': 'User ID not available for anonymous user'}, status=401)
 
+@api_view(['GET'])
+def combined_data_adminview(request,uid):
     
-def submitaction(request):
-    user=User.objects.latest('id')
-    user.is_registered=True
+    # userid = User.objects.latest('id')
+    # userid=request.user
 
+    if request.user.has_perm("fosscell.admin_permission"):
+        data1 = InstitutionReg.objects.filter(uid=uid).values()
+        data2 = FossAdvisor.objects.filter(uid=uid).values()
+        data3 = Members.objects.filter(uid=uid).values()
+
+        combined_data = {
+            'result1': list(data1),
+            'result2': list(data2),
+            'result3': list(data3),
+        }
+
+        return Response(combined_data)
+    else:
+        return Response({'error': 'User is not admin'}, status=401)
+
+
+
+class Submit(APIView):
+    def patch(self,request):
+        user=User.objects.get(id=request.user.id)
+        # l=InstitutionReg.objects.get(uid=uid)
+        data=request.data
+        data['is_registered']=True
+        # data=request.data
+        serializer=UserSerializer(user,data=data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:  
+            return Response(serializer.errors)
 
 
 class CombinedDataView(APIView):
@@ -141,9 +172,40 @@ class CombinedDataView(APIView):
             
         except:
             return Response({'error': 'User is unauthersized'}, status=401)
-def FinalApprove(request,uid):
-    l=InstitutionReg.objects.get(uid=uid)
-    l.status=True
-def FinalReject(request,uid):
-    l=InstitutionReg.objects.get(uid=uid)
-    l.status=False
+        
+
+
+        
+
+class Approval(APIView):
+    def patch(self,request,uid):
+        if request.user.has_perm("fosscell.admin_permission"):
+            l=InstitutionReg.objects.get(uid=uid)
+            data=request.data
+            data['status']=True
+            # data=request.data
+            serializer=Institutionserializer(l,data=data,partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:  
+                return Response(serializer.errors)
+        else:
+                return Response({'error': 'User is not admin'}, status=401)
+
+class Reject(APIView):
+    
+    def patch(self,request,uid):
+        if request.user.has_perm("fosscell.admin_permission"):
+            l=InstitutionReg.objects.get(uid=uid)
+            data=request.data
+            data['status']=False
+            # data=request.data
+            serializer=Institutionserializer(l,data=data,partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:  
+                return Response(serializer.errors)
+        else:
+            return Response({'error': 'User is not admin'}, status=401)
