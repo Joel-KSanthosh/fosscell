@@ -90,11 +90,12 @@ def validate_file_size(value):
     
 
 class Activity(models.Model):
+    uid = models.ForeignKey(User,on_delete=models.CASCADE)
     institution_name = models.ForeignKey(Institution,on_delete=models.CASCADE)
     program_name = models.CharField(max_length=200)
     program_type = models.ForeignKey(ProgramType,on_delete = models.PROTECT)
     program_mode = models.ForeignKey(ProgramMode,on_delete = models.PROTECT)
-    auience_type = models.ForeignKey(AudienceType,on_delete = models.PROTECT)
+    audience_type = models.ForeignKey(AudienceType,on_delete = models.PROTECT)
     participant_count = models.PositiveIntegerField()
     duration = models.PositiveIntegerField()
     date_time = models.DateTimeField(null=True,blank=True)
