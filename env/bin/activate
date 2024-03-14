@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/joel/Desktop/fosscell/env"
+VIRTUAL_ENV="/home/gopika/Desktop/fosscle/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

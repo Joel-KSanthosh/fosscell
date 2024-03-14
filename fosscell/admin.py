@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User
+from .models import User,Category,UniversityBoard,InstitutionReg,FossAdvisor,Members
 # Register your models here.
 class UserAdmin(BaseUserAdmin):
     fieldsets=(
@@ -31,3 +31,8 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Category)
+admin.site.register(UniversityBoard)
+admin.site.register(InstitutionReg)
+admin.site.register(FossAdvisor)
+admin.site.register(Members)
