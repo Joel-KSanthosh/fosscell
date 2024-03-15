@@ -12,13 +12,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields='__all__'
 
 class Institutionserializer(serializers.ModelSerializer):
-    category_name = serializers.CharField(source='category', read_only=True)
-    University_name = serializers.CharField(source='university', read_only=True)
+    
     class Meta:
         model=InstitutionReg
-        exclude=['category','university','uid']
-        include=['category_name','University_name']
-        depth=1
+        fields="__all__"
 
 
 
