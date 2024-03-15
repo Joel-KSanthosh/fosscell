@@ -67,8 +67,6 @@ class UserActivityPostView(APIView):
                 serializer.save()
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        # elif request.user.is_authenticated and request.user.has_perm('fosscell.admin_permission'):
-        #     print("success")
         else:
             return Response({'details':"Authentication required"},status=status.HTTP_401_UNAUTHORIZED)
         
@@ -169,48 +167,6 @@ class LoginApiView(APIView):
             )
         
 
-# class ActivityTableView(APIView):
-#     @method_decorator(login_required)
-#     def get(self,request):
-#         if request.user.is_authenticated and not request.user.has_perm('fosscell.admin_permission'):
-#             print(request.user)
-#             objs = Activity.objects.filter(uid=request.user)
-#             print(objs)
-#             if objs is not None:
-#                 serializer_data =[]
-#                 for values in objs:
-#                     serializer = serializers.ActivityTableSerializer(values)
-#                     serializer_data.append(serializer.data)
-#                 return Response({
-#                     'status' : 'Success',
-#                     'message' : serializer_data
-#                     },status=status.HTTP_302_FOUND)
-#             else:
-#                 return Response({
-#                     'status' : 'Failure',
-#                     'message' : "No data found!"
-#                 },status=status.HTTP_404_NOT_FOUND)
-#         elif request.user.is_authenticated and request.user.has_perm('fosscell.admin_permission'):
-#             objs = Activity.objects.all()
-#             if objs is not None:
-#                 serializer_data =[]
-#                 for values in objs:
-#                     serializer = serializers.ActivityTableSerializer(values)
-#                     serializer_data.append(serializer.data)
-#                 return Response({
-#                     'status' : 'Success',
-#                     'message' : serializer_data
-#                     },status=status.HTTP_302_FOUND)
-#             else:
-#                 return Response({
-#                     'status' : 'Failure',
-#                     'message' : "No data found!"
-#                 },status=status.HTTP_404_NOT_FOUND)
-#         else:
-#             return Response({
-#                 'status' : 'Failure',
-#                 'message' : "Unauthorized"
-#             },status=status.HTTP_401_UNAUTHORIZED)
         
 
 class ActivityTableView(APIView):

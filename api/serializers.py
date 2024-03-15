@@ -42,94 +42,16 @@ class AudienceTypeSerializer(serializers.ModelSerializer):
       
         
 class UserActivityGetSerializer(serializers.ModelSerializer):
-    # program_type_name = serializers.SerializerMethodField()
-    # program_mode_name = serializers.SerializerMethodField()
-    # audience_type_name = serializers.SerializerMethodField()
-    # # institution_name = serializers.SerializerMethodField()
     class Meta:
         model = Activity
         exclude = ['uid']
-        # fields = ['id','institution_name','program_name',"participant_count",'program_type_name', 'program_mode_name','audience_type_name',"duration","date_time","start_date","end_date" , "proposed_venue","need_assistance","kind_of_assistance","notified_others","website_link","supporting_documents" ,'status', 'remarks', ]
-
-        # def get_program_type_name(self, obj):
-        #     program_type_id = obj.program_type_id
-        #     try:
-        #         program_type = ProgramType.objects.get(pk=program_type_id)
-        #         return program_type.values
-        #     except ProgramType.DoesNotExist:
-        #         return None
-        
-        # def get_program_mode_name(self, obj):
-        #     program_mode_id = obj.program_mode_id
-        #     try:
-        #         program_mode = ProgramMode.objects.get(pk=program_mode_id)
-        #         return program_mode.values
-        #     except ProgramMode.DoesNotExist:
-        #         return None
-        
-        # def get_audience_type_name(self, obj):
-        #     audience_type_id = obj.audience_type_id
-        #     try:
-        #         audience_type = AudienceType.objects.get(pk=audience_type_id)
-        #         return audience_type.values
-        #     except AudienceType.DoesNotExist:
-        #         return None
-            
-        # def get_institution_name(self, obj):
-        #     institution_name_id = obj.institution_name_id
-        #     try:
-        #         institution_name = Institution.objects.get(pk=institution_name_id)
-        #         return institution_name.name
-        #     except Institution.DoesNotExist:
-        #         return None
-
-
 
 
 
 class UserActivityPostSerializer(serializers.ModelSerializer):
-    # program_type_name = serializers.SerializerMethodField()
-    # program_mode_name = serializers.SerializerMethodField()
-    # audience_type_name = serializers.SerializerMethodField()
-    # institution_name = serializers.SerializerMethodField()
     class Meta:
         model = Activity
         fields = '__all__'
-    #     fields = ['id',"uid",'institution_name','program_name',"participant_count",'program_type_name', 'program_mode_name','audience_type_name',"duration","date_time","start_date","end_date" , "proposed_venue","need_assistance","kind_of_assistance","notified_others","website_link","supporting_documents" ,'status', 'remarks', ]
-
-    # def get_program_type_name(self, obj):
-    #     program_type_id = obj.program_type_id
-    #     try:
-    #         program_type = ProgramType.objects.get(pk=program_type_id)
-    #         return program_type.values
-    #     except ProgramType.DoesNotExist:
-    #         return None
-        
-    # def get_program_mode_name(self, obj):
-    #     program_mode_id = obj.program_mode_id
-    #     try:
-    #         program_mode = ProgramMode.objects.get(pk=program_mode_id)
-    #         return program_mode.values
-    #     except ProgramMode.DoesNotExist:
-    #         return None
-    
-    # def get_audience_type_name(self, obj):
-    #     audience_type_id = obj.audience_type_id
-    #     try:
-    #         audience_type = AudienceType.objects.get(pk=audience_type_id)
-    #         return audience_type.values
-    #     except AudienceType.DoesNotExist:
-    #         return None
-        
-    # # def get_institution_name(self, obj):
-    # #     institution_name_id = obj.institution_name_id
-    # #     try:
-    # #         institution_name = Institution.objects.get(pk=institution_name_id)
-    # #         return institution_name.name
-    # #     except Institution.DoesNotExist:
-    # #         return None
-
-
 
 
 class RegisterUserSerializer(serializers.Serializer):
