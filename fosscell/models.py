@@ -35,6 +35,13 @@ class UserManager(BaseUserManager):
         return user
     
 
+class Institution(models.Model):
+    name = models.CharField(max_length=250,unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class User(AbstractBaseUser,PermissionsMixin):
     email=models.EmailField(max_length=254,unique=True)
     institution = models.CharField(max_length=250)
@@ -166,3 +173,62 @@ class Members(models.Model):
     course_end_date = models.DateField()
     def __str__(self):
         return self.name
+    
+class ProgramType(models.Model):
+    values = models.CharField(max_length=75)
+
+    def __str__(self):
+        return self.values
+    
+
+
+class ProgramMode(models.Model):
+    values = models.CharField(max_length=75)
+
+    def __str__(self):
+        return self.values
+    
+
+class AudienceType(models.Model):
+    values = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.values
+
+def validate_file_size(value):
+    limit = 500 * 1024
+    if value.size>limit:
+        raise ValidationError(f"File size cannot exceed 500 KB")
+    
+
+class Activity(models.Model):
+    uid = models.ForeignKey(User,on_delete=models.CASCADE)
+    institution_name = models.ForeignKey(Institution,on_delete=models.CASCADE)
+    program_name = models.CharField(max_length=200)
+    program_type = models.ForeignKey(ProgramType,on_delete = models.PROTECT)
+    program_mode = models.ForeignKey(ProgramMode,on_delete = models.PROTECT)
+    audience_type = models.ForeignKey(AudienceType,on_delete = models.PROTECT)
+    participant_count = models.PositiveIntegerField()
+    duration = models.PositiveIntegerField()
+    date_time = models.DateTimeField(null=True,blank=True)
+    start_date = models.DateField(null=True,blank=True)
+    end_date = models.DateField(null=True,blank=True)
+    proposed_venue = models.CharField(max_length=255,null=True,blank=True)
+    need_assistance = models.BooleanField()
+    kind_of_assistance = models.TextField(null=True,blank=True)
+    notified_others = models.BooleanField()
+    website_link = models.CharField(max_length=255,null=True,blank=True)
+    supporting_documents = models.FileField(upload_to='supporting_documents/',
+                                            validators=[
+                                                FileExtensionValidator(allowed_extensions=['pdf']),
+                                                validate_file_size,
+                                            ]
+                                            )
+    status = models.BooleanField(null=True)
+    remarks = models.TextField(null=True,blank=True)
+
+    def __str__(self):
+        return self.program_name
+
+
+
