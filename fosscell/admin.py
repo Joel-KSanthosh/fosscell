@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User,Institution,ProgramMode,ProgramType,AudienceType,Activity
+from .models import User,ProgramMode,ProgramType,AudienceType,Activity,Institution
 # Register your models here.
 class UserAdmin(BaseUserAdmin):
     fieldsets=(

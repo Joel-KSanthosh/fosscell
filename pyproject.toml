@@ -10,6 +10,7 @@ python = "^3.10"
 django = "^5.0.3"
 djangorestframework = "^3.14.0"
 pillow = "^10.2.0"
+python-dateutil = "^2.9.0.post0"
 
 
 [build-system]

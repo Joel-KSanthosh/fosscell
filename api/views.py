@@ -178,8 +178,6 @@ class ActivityTableView(APIView):
             else:
                 objs = Activity.objects.filter(uid=request.user)
 
-            print("Queryset:", objs)  # Print the queryset for debugging purposes
-
             if objs.exists():
                 serializer = serializers.ActivityTableSerializer(objs, many=True,context={'objs':objs})
                 return Response({
@@ -198,59 +196,61 @@ class ActivityTableView(APIView):
             }, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class AdminApprove(APIView):
-    @method_decorator(login_required)
-    def patch(self,request,pk):
-        if request.user.is_authenticated and request.user.has_perm('fosscell.admin_permission'):
-            try:
-                objs = Activity.objects.get(id=pk)
-            except:
-                return Response({'status':'Failure','message':'Activity does not exist!'},status=status.HTTP_204_NO_CONTENT)
-            data = request.data
-            # if data['status'] == null:
-            data['status'] = True
-            serializer = serializers.UserActivityPostSerializer(objs,data=data,partial=True)
-            if not serializer.is_valid():
-                return Response({
-                    'status' : 'Failed',
-                    'message' : serializer.errors,
-                }, status.HTTP_400_BAD_REQUEST
-                )
+# class AdminApprove(APIView):
+#     @method_decorator(login_required)
+#     def patch(self,request,pk):
+#         if request.user.is_authenticated and request.user.has_perm('fosscell.admin_permission'):
+#             try:
+#                 objs = Activity.objects.get(id=pk)
+#             except:
+#                 return Response({'status':'Failure','message':'Activity does not exist!'},status=status.HTTP_204_NO_CONTENT)
+#             data = request.data
+#             # if data['status'] == null:
+#             data['status'] = True
+#             serializer = serializers.UserActivityPostSerializer(objs,data=data,partial=True)
+#             if not serializer.is_valid():
+#                 return Response({
+#                     'status' : 'Failed',
+#                     'message' : serializer.errors,
+#                 }, status.HTTP_400_BAD_REQUEST
+#                 )
 
-            serializer.save()
-            return Response({
-                    'status' : 'Success',
-                    'message' : serializer.data,
-                }, status.HTTP_200_OK
-                )
-        else:
-            return Response({'status':'Failure','message':'Not Authorized!'},status=status.HTTP_401_UNAUTHORIZED)
+#             serializer.save()
+#             return Response({
+#                     'status' : 'Success',
+#                     'message' : serializer.data,
+#                 }, status.HTTP_200_OK
+#                 )
+#         else:
+#             return Response({'status':'Failure','message':'Not Authorized!'},status=status.HTTP_401_UNAUTHORIZED)
         
 
-class AdminDisapprove(APIView):
+class AdminApprovalView(APIView):
     @method_decorator(login_required)
-    def patch(self,request,pk):
+    def patch(self, request, pk):
         if request.user.is_authenticated and request.user.has_perm('fosscell.admin_permission'):
             try:
-                objs = Activity.objects.get(id=pk)
-            except:
-                return Response({'status':'Failure','message':'Activity does not exist!'},status=status.HTTP_204_NO_CONTENT)
-            data = request.data
-            # if data['status'] == null:
-            data['status'] = False
-            serializer = serializers.UserActivityPostSerializer(objs,data=data,partial=True)
+                activity = Activity.objects.get(id=pk)
+            except ObjectDoesNotExist:
+                return Response({'status': 'Failure', 'message': 'Activity does not exist!'}, status=status.HTTP_204_NO_CONTENT)
+            
+            if(activity.status == False or activity.status == True):
+                return Response({"status":"Failure","message":"Already approved or rejected"},status=status.HTTP_403_FORBIDDEN)
+
+            data = request.data.copy()
+            button = data.get('button')
+
+            if button not in ('Disapprove', 'Approve'):
+                return Response({'status': 'Failed', 'message': 'Invalid button value'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            status_value = True if button == 'Approve' else False
+            data['status'] = status_value
+
+            serializer = serializers.ApprovalSerializer(activity, data=data, partial=True)
             if not serializer.is_valid():
-                return Response({
-                    'status' : 'Failed',
-                    'message' : serializer.errors,
-                }, status.HTTP_400_BAD_REQUEST
-                )
+                return Response({'status': 'Failed', 'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
             serializer.save()
-            return Response({
-                    'status' : 'Success',
-                    'message' : serializer.data,
-                }, status.HTTP_200_OK
-                )
+            return Response({'status': 'Success', 'message': serializer.data}, status=status.HTTP_200_OK)
         else:
-            return Response({'status':'Failure','message':'Not Authorized!'},status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'status': 'Failure', 'message': 'Not Authorized!'}, status=status.HTTP_401_UNAUTHORIZED)
